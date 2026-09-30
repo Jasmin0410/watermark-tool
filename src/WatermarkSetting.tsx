@@ -1,6 +1,8 @@
 import styled from "styled-components";
 
 type WatermarkSettingProps = {
+	stageRef: any;
+	image: HTMLImageElement;
 	watermarkText?: string;
 	opacity: number;
 	fontSize: number;
@@ -27,12 +29,26 @@ const WatermarkSettingContainer = styled.div`
 `;
 
 const Label = styled.label`
-	display: flex;
-	align-items: center;
-	gap: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 `;
 
+const handleExport = async function (stageRef: any, image: HTMLImageElement) {
+	const stage = stageRef.current;
+	const pixelRatio = image.naturalWidth / stage.width();
+	const link = document.createElement("a");
+
+	link.href = stageRef.current.toDataURL({
+		pixelRatio,
+	});
+	link.download = "watermarked.png";
+	link.click();
+};
+
 export default function WatermarkSetting({
+	stageRef,
+	image,
 	watermarkText,
 	opacity,
 	fontSize,
@@ -50,7 +66,7 @@ export default function WatermarkSetting({
 					onChange={function (e) {
 						setText(e.target.value);
 					}}
-					style={{ padding: "3px 5px", width: "90px", fontSize: "12px" }}
+					style={{ padding: "3px 5px", width: "200px", fontSize: "12px" }}
 				/>
 			</Label>
 			<Label>
@@ -84,7 +100,9 @@ export default function WatermarkSetting({
 				<span style={{ minWidth: "20px" }}>{fontSize}</span>
 			</Label>
 			<button
-				onClick={() => { }}
+				onClick={() => {
+					handleExport(stageRef, image);
+				}}
 				style={{
 					padding: "4px 10px",
 					cursor: "pointer",

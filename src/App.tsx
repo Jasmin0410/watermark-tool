@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
 import WatermarkPreView from "./WatermarkPreView";
-import WatermarkSetting from "./WatermarkSetting";
 
 const DropzoneContainer = styled.section`
   border: 2px dashed #ccc;
@@ -21,10 +20,10 @@ function useLoadedImage(file: File | null) {
 
   useEffect(() => {
     if (!file) return;
-
     let active = true;
     const objectUrl = URL.createObjectURL(file);
-    const loadedImage = new window.Image();
+    const loadedImage = new Image();
+
     loadedImage.onload = () => {
       if (active) setLoaded({ file, image: loadedImage });
     };
@@ -44,35 +43,18 @@ function useLoadedImage(file: File | null) {
 
 function App() {
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [text, setText] = useState("Watermark");
-  const [opacity, setOpacity] = useState(0.5);
-  const [fontSize, setFontSize] = useState(20);
-  const image = useLoadedImage(imageFile);
-
   const { getRootProps, getInputProps } = useDropzone({
     accept: { "image/*": [] },
     multiple: false,
     onDrop: (acceptedFiles) => setImageFile(acceptedFiles[0] ?? null),
   });
+  const image = useLoadedImage(imageFile);
 
   return (
     <>
       <h3>Watermark Tool</h3>
-      <WatermarkSetting
-        watermarkText={text}
-        opacity={opacity}
-        fontSize={fontSize}
-        setText={setText}
-        setOpacity={setOpacity}
-        setFontSize={setFontSize}
-      />
       {image ? (
-        <WatermarkPreView
-          image={image}
-          watermarkText={text}
-          opacity={opacity}
-          fontSize={fontSize}
-        />
+        <WatermarkPreView image={image} />
       ) : (
         <DropzoneContainer>
           <div {...getRootProps({ className: "dropzone" })}>
